@@ -1,0 +1,14 @@
+# IntelliJ IDEA
+/.idea/
+/cf-manager2.iml
+
+# Composer
+composer.phar
+/vendor/
+
+# Temp
+/temp/
+/logs/
+
+# Configuration
+/data/config.php

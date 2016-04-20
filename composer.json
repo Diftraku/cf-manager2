@@ -1,0 +1,12 @@
+{
+  "name": "diftraku/cf-manager2",
+  "description": "Generic event and ticket management software",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Diftraku",
+      "email": "diftrau@gmail.com"
+    }
+  ]
+}
