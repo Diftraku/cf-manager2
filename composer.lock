@@ -4,9 +4,57 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9d3decf42b1e393248531284593b5259",
-    "content-hash": "52f65334889662e2f28fa2bf9d8edf8a",
+    "hash": "313db2f6a22901fba2f05f5a3f44eeab",
+    "content-hash": "67e2719d2251e11741490e68762b8311",
     "packages": [
+        {
+            "name": "akrabat/rka-ip-address-middleware",
+            "version": "0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/akrabat/rka-ip-address-middleware.git",
+                "reference": "1c9947fdbaad04614e8b15d55f191f11c39293d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/akrabat/rka-ip-address-middleware/zipball/1c9947fdbaad04614e8b15d55f191f11c39293d1",
+                "reference": "1c9947fdbaad04614e8b15d55f191f11c39293d1",
+                "shasum": ""
+            },
+            "require": {
+                "psr/http-message": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^2.3",
+                "zendframework/zend-diactoros": "^1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RKA\\Middleware\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Allen",
+                    "email": "rob@akrabat.com",
+                    "homepage": "http://akrabat.com"
+                }
+            ],
+            "description": "PSR-7 Middleware that determines the client IP address and stores it as an ServerRequest attribute",
+            "homepage": "http://github.com/akrabat/rka-ip-address-middleware",
+            "keywords": [
+                "IP",
+                "middleware",
+                "psr7"
+            ],
+            "time": "2015-11-06 10:38:17"
+        },
         {
             "name": "container-interop/container-interop",
             "version": "1.1.0",
@@ -74,6 +122,48 @@
                 "orm"
             ],
             "time": "2015-12-28 19:46:34"
+        },
+        {
+            "name": "ircmaxell/password-compat",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/password_compat.git",
+                "reference": "9b99377557a33a4129c9194e60a97a685fab21e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/password_compat/zipball/9b99377557a33a4129c9194e60a97a685fab21e0",
+                "reference": "9b99377557a33a4129c9194e60a97a685fab21e0",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/password.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net",
+                    "homepage": "http://blog.ircmaxell.com"
+                }
+            ],
+            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
+            "homepage": "https://github.com/ircmaxell/password_compat",
+            "keywords": [
+                "hashing",
+                "password"
+            ],
+            "time": "2014-11-20 19:18:42"
         },
         {
             "name": "monolog/monolog",
@@ -453,6 +543,55 @@
                 "router"
             ],
             "time": "2016-04-14 09:05:11"
+        },
+        {
+            "name": "tuupola/slim-basic-auth",
+            "version": "2.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tuupola/slim-basic-auth.git",
+                "reference": "4e8bf0b9c42c150a90dca578bf4690abac9c4246"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tuupola/slim-basic-auth/zipball/4e8bf0b9c42c150a90dca578bf4690abac9c4246",
+                "reference": "4e8bf0b9c42c150a90dca578bf4690abac9c4246",
+                "shasum": ""
+            },
+            "require": {
+                "ircmaxell/password-compat": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.3",
+                "squizlabs/php_codesniffer": "^2.3",
+                "zendframework/zend-diactoros": "^1.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Slim\\Middleware\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mika Tuupola",
+                    "email": "tuupola@appelsiini.net",
+                    "homepage": "http://www.appelsiini.net/"
+                }
+            ],
+            "description": "PSR-7 HTTP Basic Authentication Middleware",
+            "homepage": "http://www.appelsiini.net/projects/slim-basic-auth",
+            "keywords": [
+                "auth",
+                "middleware",
+                "psr-7",
+                "slim"
+            ],
+            "time": "2016-04-28 16:10:54"
         }
     ],
     "packages-dev": [],
