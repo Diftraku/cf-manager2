@@ -62,8 +62,8 @@ class Ticket
 
         // Showtime!
         try {
-            $ticketCount = R::count('tickets');
-            $tickets = R::findAndExport('tickets', 'LIMIT ? OFFSET ? ORDER BY ? ?', [$limit, $offset, $order_by, $order_direction]);
+            $ticketCount = R::count('ticket');
+            $tickets = R::findAndExport('ticket', 'LIMIT ? OFFSET ? ORDER BY ? ?', [$limit, $offset, $order_by, $order_direction]);
             $response->withJson(['tickets' => $tickets, 'count' => $ticketCount]);
         }
         catch (RedExceptionSQL $e) {
@@ -93,7 +93,7 @@ class Ticket
         try {
             if (!is_null($id)) {
                 $id = intval($id);
-                $ticket = R::findOne('tickets', 'WHERE id = ?', [$id])->export();
+                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id])->export();
                 $response->withJson($ticket);
             }
             else {
@@ -130,9 +130,10 @@ class Ticket
         try {
             if (!is_null($id)) {
                 $id = intval($id);
-                $ticket = R::findOne('tickets', 'WHERE id = ?', [$id]);
+                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
                 $ticket->import($params);
                 R::store($ticket);
+                $this->ci->get('logger')->info(printf('updateTicket%s: %s %s', json_encode($params), 'Updated ticket with ID ', $id));
                 $response->withJson($ticket);
             }
             else {
@@ -179,7 +180,7 @@ class Ticket
 
         // Showtime!
         try {
-            $ticket = R::dispense('tickets');
+            $ticket = R::dispense('ticket');
             $ticket->import($params);
             $id = R::store($ticket);
             $this->ci->get('logger')->info(printf('createTicket%s: %s %s', json_encode($params), 'Created new ticket with ID ', $id));
