@@ -9,7 +9,6 @@
 
 namespace CFM2\Controllers;
 
-
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -123,6 +122,7 @@ class Ticket
      */
     public function updateTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
+        // @TODO Add validation
         $params = $request->getParsedBody();
         $id = $args['id'];
 
@@ -152,6 +152,19 @@ class Ticket
     }
 
     /**
+     * updateTickets
+     * Update multiple tickets
+     * @method PUT
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     */
+    public function updateTickets( Request $request, Response $response, $args = [] ) {
+        $response->withStatus(501)->withJson(['message' => 'Not implemented']);
+    }
+
+
+    /**
      * createTicket
      * Create a ticket with metadata
      * @method POST
@@ -161,11 +174,12 @@ class Ticket
      */
     public function createTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
+        // @TODO Add validation
         $params = $request->getParsedBody();
 
         // Showtime!
         try {
-            $ticket = R::dispens('tickets');
+            $ticket = R::dispense('tickets');
             $ticket->import($params);
             $id = R::store($ticket);
             $this->ci->get('logger')->info(printf('createTicket%s: %s %s', json_encode($params), 'Created new ticket with ID ', $id));
@@ -182,5 +196,17 @@ class Ticket
             // Flush the toilet
             R::close();
         }
+    }
+
+    /**
+     * createTickets
+     * Create multiple tickets with metadata
+     * @method POST
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     */
+    public function createTickets( Request $request, Response $response, $args = [] ) {
+        $response->withStatus(501)->withJson(['message' => 'Not implemented']);
     }
 }
