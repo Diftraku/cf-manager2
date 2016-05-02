@@ -1,7 +1,3 @@
-# IntelliJ IDEA
-/.idea/
-/cf-manager2.iml
-
 # Composer
 composer.phar
 /vendor/
