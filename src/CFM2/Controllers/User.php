@@ -11,6 +11,7 @@ namespace CFM2\Controllers;
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use \R;
 
 class User
 {
@@ -46,6 +47,58 @@ class User
      */
     public function logoutUser( Request $request, Response $response, $args = [] ) {
         $response->withStatus(501)->withJson(['message' => 'Not implemented']);
+    }
+
+    /**
+     * getUsers
+     * Retrieve list of users from the database
+     * @method GET
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     */
+    public function getUsers( Request $request, Response $response, $args = [] ) {
+        // Grab parameters from the request
+        list($offset, $limit, $filter, $order_by) = [
+            intval($request->getQueryParam('offset', 0)),
+            intval($request->getQueryParam('limit', 20)),
+            $request->getQueryParam('filter', ''),
+            $request->getQueryParam('order_by', 'created_on')
+        ];
+
+        // Get sort direction
+        $order_direction = (strstr($order_by, '-') !== FALSE) ? 'ASC' : 'DESC';
+        $order_by = str_replace('-', '', $order_by);
+
+        // Sanity checking for offset and limit
+        $offset = ($offset < 0) ? 0 : $offset;
+        $limit = ($limit <= 0) ? 20 : $limit;
+        $limit = ($limit > 60) ? 60 : $limit;
+
+        // Verify the column to order by
+        if (!in_array($order_by, ['name', 'username', 'email', 'role', 'last_access', 'modified_on', 'created_on'])) {
+            $order_by = 'created';
+        }
+
+        // @TODO Filtering users (ie. search)
+        // Blatantly copy what Shimmie does?
+
+        // Showtime!
+        try {
+            $userCount = R::count('user');
+            $users = R::findAndExport('user', 'LIMIT ? OFFSET ? ORDER BY ? ?', [$limit, $offset, $order_by, $order_direction]);
+            $response->withJson(['users' => $users, 'count' => $userCount]);
+        }
+        catch (RedExceptionSQL $e) {
+            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $params = ['offset' => $offset, 'limit' => $limit, 'filter' => $filter, 'order_by' => $order_by, 'order_direction' => $order_direction];
+            $this->ci->get('logger')->error(printf('getUsers%s: %s', json_encode($params), $message));
+            $response->withStatus(500)->withJson(['message' => $message]);
+        }
+        finally {
+            // Flush the toilet
+            R::close();
+        }
     }
 
     /**

@@ -1,14 +1,14 @@
 <?php
 // Application middleware
+use Slim\Middleware\HttpBasicAuthentication\PdoAuthenticator;
+use Slim\Middleware\HttpBasicAuthentication;
+
 
 if (CF_PROXY_CHECKIP) {
     $app->add(new RKA\Middleware\IpAddress(true));
 }
 
 if (CF_AUTH_HTTP) {
-    use Slim\Middleware\HttpBasicAuthentication\PdoAuthenticator;
-    use Slim\Middleware\HttpBasicAuthentication;
-
     $app->add(new HttpBasicAuthentication([
         'path' => '/*',
         'realm' => CF_AUTH_HTTP_REALM,

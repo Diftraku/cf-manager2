@@ -13,6 +13,7 @@ use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use RedBeanPHP\RedException\SQL as RedExceptionSQL;
+use \R;
 
 class Ticket
 {
