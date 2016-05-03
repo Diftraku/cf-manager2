@@ -7,7 +7,9 @@ composer.phar
 /logs/
 
 # Configuration
-/data/config.php
+/data/*
+!data/config.dist.php
+!data/defaults.php
 
 # IDEA
 ## User-specific stuff:
