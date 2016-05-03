@@ -17,6 +17,7 @@ if (file_exists(CF_DIR_DATA . 'config.php')) {
     require CF_DIR_DATA . 'config.php';
 }
 require CF_DIR_DATA . 'config.dist.php';
+require CF_DIR_LIB . 'rb.php';
 session_start();
 
 // Instantiate the app
