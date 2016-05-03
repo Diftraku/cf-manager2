@@ -22,8 +22,8 @@ _d('CF_HASH_ALGO',      'SHA256');                                  // Default h
 _d('CF_PASS_ALGO',      PASSWORD_BCRYPT);                           // Default password_hash() algorithm
 _d('CF_PROXY_CHECKIP',  true);                                      // Check for Proxy IPs
 
-_d('CF_AUTH_HTTP',  true);                                          // Should we use HTTP auth?
-_d('CF_AUTH_HTTP_REALM',  'CF-Manager 2');                          // HTTP Authentication realm
+_d('CF_AUTH_HTTP',      false);                                      // Should we use HTTP auth?
+_d('CF_AUTH_HTTP_REALM','CF-Manager 2');                            // HTTP Authentication realm
 
 // Default overrides for Slim Framework
 // These are merged in public/index.php before instantiation
