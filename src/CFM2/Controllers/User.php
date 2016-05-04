@@ -90,9 +90,9 @@ class User
             $response->withJson(['users' => $users, 'count' => $userCount]);
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['offset' => $offset, 'limit' => $limit, 'filter' => $filter, 'order_by' => $order_by, 'order_direction' => $order_direction];
-            $this->ci->get('logger')->error(printf('getUsers%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('getUsers: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
@@ -124,9 +124,9 @@ class User
             }
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id];
-            $this->ci->get('logger')->error(printf('getUser%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('getUser: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
@@ -156,7 +156,7 @@ class User
                 $user = R::findOne('user', 'WHERE id = ?', [$id]);
                 $user->import($params);
                 R::store($user);
-                $this->ci->get('logger')->info(printf('updateUser%s: %s %s', json_encode($params), 'Updated user with ID ', $id));
+                $this->ci->get('logger')->info(sprintf('updateUser: %s %s', 'Updated user with ID ', $id), $params);
                 $response->withJson($user);
             }
             else {
@@ -164,9 +164,9 @@ class User
             }
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id, 'params' => $params];
-            $this->ci->get('logger')->error(printf('updateUser%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('updateUser: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
@@ -193,14 +193,14 @@ class User
             $ticket = R::dispense('user');
             $ticket->import($params);
             $id = R::store($ticket);
-            $this->ci->get('logger')->info(printf('createUser%s: %s %s', json_encode($params), 'Created new user with ID ', $id));
+            $this->ci->get('logger')->info(sprintf('createUser: %s %s', 'Created new user with ID ', $id), $params);
             // @TODO Standardize the response format (payload,message,code etc.)
             $response->withJson(['status' => 'success', 'id' => $id]);
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['params' => $params];
-            $this->ci->get('logger')->error(printf('createUser%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('createUser: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {

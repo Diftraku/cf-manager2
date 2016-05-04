@@ -68,9 +68,9 @@ class Ticket
             $response->withJson(['tickets' => $tickets, 'count' => $ticketCount]);
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['offset' => $offset, 'limit' => $limit, 'filter' => $filter, 'order_by' => $order_by, 'order_direction' => $order_direction];
-            $this->ci->get('logger')->error(printf('getTickets%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('getTickets: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
@@ -96,15 +96,16 @@ class Ticket
                 $id = intval($id);
                 $ticket = R::findOne('ticket', 'WHERE id = ?', [$id])->export();
                 $response->withJson($ticket);
+                $this->ci->get('logger')->info(sprintf('getTicket: %s', 'Retrieved ticket'), ['id' => $id]);
             }
             else {
                 $response->withStatus(400)->withJson(['message' => 'Required parameter `id` missing']);
             }
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id];
-            $this->ci->get('logger')->error(printf('getTicket%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('getTicket%s: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
@@ -134,7 +135,7 @@ class Ticket
                 $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
                 $ticket->import($params);
                 R::store($ticket);
-                $this->ci->get('logger')->info(printf('updateTicket%s: %s %s', json_encode($params), 'Updated ticket with ID ', $id));
+                $this->ci->get('logger')->info(sprintf('updateTicket: %s %s', 'Updated ticket with ID ', $id), $params);
                 $response->withJson($ticket);
             }
             else {
@@ -142,9 +143,9 @@ class Ticket
             }
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id, 'params' => $params];
-            $this->ci->get('logger')->error(printf('updateTicket%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('updateTicket: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
@@ -184,14 +185,14 @@ class Ticket
             $ticket = R::dispense('ticket');
             $ticket->import($params);
             $id = R::store($ticket);
-            $this->ci->get('logger')->info(printf('createTicket%s: %s %s', json_encode($params), 'Created new ticket with ID ', $id));
+            $this->ci->get('logger')->info(sprintf('createTicket%s: %s %s', json_encode($params), 'Created new ticket with ID ', $id));
             // @TODO Standardize the response format (payload,message,code etc.)
             $response->withJson(['status' => 'success', 'id' => $id]);
         }
         catch (RedExceptionSQL $e) {
-            $message = printf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['params' => $params];
-            $this->ci->get('logger')->error(printf('createTicket%s: %s', json_encode($params), $message));
+            $this->ci->get('logger')->error(sprintf('createTicket: %s', $message), $params);
             $response->withStatus(500)->withJson(['message' => $message]);
         }
         finally {
