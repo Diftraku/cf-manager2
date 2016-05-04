@@ -22,15 +22,14 @@ class User extends SimpleModel
      * FUSE method for pre-loading RedBean
      */
     public function dispense() {
-        // This will most likely be a really bad way to do this
-        // @TODO Test this stuff
         $this->bean->display_name = '';
         $this->bean->username = '';
         $this->bean->password = '';
         $this->bean->email = '';
         $this->bean->enabled = true;
         $this->bean->role = 'user';
-        $this->bean->created_on = '';
+        $this->bean->created_on = time();
+        // @TODO Add username from the creator
         $this->bean->created_by = '';
         $this->bean->modified_on = '';
         $this->bean->modified_by = '';
@@ -44,6 +43,11 @@ class User extends SimpleModel
         // Hash the password if it changes
         if($this->bean->hasChanged('password')) {
             $this->bean->password = password_hash($this->bean->password, CF_PASS_ALGO);
+        }
+        if(!is_null($this->bean->id)) {
+            $this->bean->modified_on = time();
+            // @TODO Add username from the editor
+            $this->bean->modified_by = '';
         }
     }
 
