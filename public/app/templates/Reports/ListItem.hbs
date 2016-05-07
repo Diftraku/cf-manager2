@@ -1,0 +1,12 @@
+    <td class="text-center"><a href="#tickets/view/{{id}}">{{id}}</a></td>
+    <td><abbr title="{{statusDescription}}">{{statusLabel}}</abbr></td>
+    <td>{{typeLabel}}</td>
+    <td>{{date}}</td>
+    <td>{{first_name}} {{last_name}}</td>
+    <td>{{email}}</td>
+    <td>{{country}}</td>
+    <td>
+        <a href="/api/ticket/qr/{{hash}}" title="QR"><i class="glyphicon glyphicon-qrcode"></i></a>
+        <a href="/api/ticket/pdf/{{hash}}" title="Print"><i class="glyphicon glyphicon-print"></i></a>
+        <a href="#tickets/edit/{{id}}" title="Edit"><i class="glyphicon glyphicon-pencil"></i></a>
+    </td>

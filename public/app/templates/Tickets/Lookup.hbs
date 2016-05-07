@@ -1,0 +1,90 @@
+<div class="col-md-6 col-md-offset-3">
+	<h3>Ticket Claim</h3>
+
+	<form>
+		<fieldset>
+			<div class="row"><p>Please scan the QR Code from the ticket (present in all official tickets) or use the
+				check number present in the CF-Manager 2 printouts.</p></div>
+			<div class="row">
+				<div class="col-md-5 form-group">
+					<label for="hash">QR Code</label>
+
+					<div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-qrcode"></i>
+                    </span>
+						<input class="form-control" type="text" name="hash"
+						       id="hash" placeholder="QR Code">
+					</div>
+				</div>
+				<div class="col-md-2 form-group text-center">
+					<h4>Or</h4>
+				</div>
+				<div class="col-md-5 form-group">
+					<div class="form-group row">
+						<label for="check">Check Number (Only present in non-Holvi tickets)</label>
+
+						<div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-check"></i>
+                    </span><input class="form-control" type="text" name="check" id="check"
+                                  placeholder="Check Number">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row"><p>If neither are available or present (for example, ticket hasn't been printed or stored
+				on ticket holder's device) you can use the fields below to look by name or email.</p></div>
+			<div class="row">
+				<div class="col-md-5 form-group">
+					<label for="last_name">Last Name</label>
+
+					<div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-user"></i>
+                        </span>
+                    <input class="form-control" type="text" name="last_name"
+                           id="last_name" placeholder="Last Name">
+                        </div>
+				</div>
+				<div class="col-md-2 form-group text-center">
+					<h4>Or</h4>
+				</div>
+				<div class="col-md-5 form-group">
+					<div class="form-group row">
+						<label for="email">E-mail</label>
+
+						<div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-envelope"></i>
+                    </span><input class="form-control" type="email" name="email" id="email"
+                                  placeholder="E-mail">
+						</div>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		<div class="form-actions">
+			<button class="btn btn-default" type="reset"><i class="glyphicon glyphicon-remove"></i> Clear Form</button>
+			<a class="btn btn-primary lookup"><i class="glyphicon glyphicon-search"></i> Lookup</a>
+		</div>
+	</form>
+</div>
+<div class="modal fade" id="modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title">Multiple results</h4>
+            </div>
+            <div class="modal-body">
+                <p>Pick one!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary select">Select</a>
+            </div>
+        </div>
+    </div>
+</div>

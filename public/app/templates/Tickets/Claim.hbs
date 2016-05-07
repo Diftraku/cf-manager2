@@ -1,0 +1,179 @@
+<div class="col-md-6 col-md-offset-3">
+    <h3>Ticket Claim</h3>
+    <form>
+        <div class="row"><p>Please verify the following details from the print-out or digital copy of the ticket from the ticket holder</p></div>
+	    <fieldset>
+		    <legend>Contact Details</legend>
+		    <div class="row">
+			    <div class="col-md-6 form-group">
+				    <label for="first_name">First Name</label>
+				    <input disabled class="form-control" type="text" name="first_name"
+				           id="first_name" placeholder="First Name" value="{{first_name}}">
+			    </div>
+			    <div class="col-md-6 form-group">
+				    <label for="last_name">Last Name</label>
+				    <input disabled class="form-control" type="text" name="last_name" id="last_name"
+				           placeholder="Last Name" value="{{last_name}}">
+			    </div>
+		    </div>
+		    <div class="row">
+			    <div class="col-md-6 form-group">
+				    <label for="email">E-mail</label>
+
+				    <input disabled class="form-control" type="email" name="email" id="email"
+				           placeholder="E-mail" value="{{email}}">
+			    </div>
+			    <div class="col-md-6 form-group">
+				    <label for="country">Country</label>
+
+				    <input disabled class="form-control" type="text" name="country" id="country"
+				           placeholder="Country" value="{{country}}">
+			    </div>
+		    </div>
+	    </fieldset>
+	    <fieldset>
+		    <legend>Ticket</legend>
+		    <div class="row">
+			    <div class="col-md-3 form-group">
+				    <label for="type">Type</label>
+				    <select disabled class="form-control" name="type" id="type">
+                        {{#each types}}
+                            {{#with this}}
+							    <option value="{{value}}"{{selected}}>{{label}}</option>
+                            {{/with}}
+                        {{/each}}
+				    </select>
+			    </div>
+			    <div class="col-md-6">
+				    <label for="hash">Hash</label>
+				    <input disabled class="form-control" type="text" name="hash" id="hash" placeholder="Hash"
+				           value="{{hash}}">
+			    </div>
+			    <div class="col-md-3">
+				    <label for="check">Check</label>
+				    <input disabled class="form-control" type="text" name="check" id="check" placeholder="Check"
+				           value="{{check}}">
+			    </div>
+		    </div>
+		    <div class="row">
+			    <div class="col-md-3 form-group">
+				    <label for="status">Status</label>
+				    <select disabled class="form-control" name="status" id="status">
+                        {{#each states}}
+                            {{#with this}}
+							    <option value="{{value}}"{{selected}}>{{label}}</option>
+                            {{/with}}
+                        {{/each}}
+				    </select>
+			    </div>
+			    <div class="col-md-2 form-group">
+				    <label for="order_id">Quantity</label>
+				    <input disabled class="form-control" type="text" name="quantity" id="quantity"
+				           placeholder="Quantity" value="{{quantity}}">
+			    </div>
+			    <div class="col-md-4 form-group">
+				    <label for="reference">Reference</label>
+				    <input disabled class="form-control" type="text" name="reference" id="reference"
+				           placeholder="Reference" value="{{reference}}">
+			    </div>
+			    <div class="col-md-3 form-group">
+				    <label for="claimed">Claimed</label>
+				    <select disabled class="form-control" name="claimed" id="claimed">
+					    <option value="0">No</option>
+					    <option value="1"{{claimed}}>Yes</option>
+				    </select>
+			    </div>
+		    </div>
+		    <div class="row">
+			    <div class="col-md-6 form-group">
+				    <label for="order_id">Order ID</label>
+				    <input disabled class="form-control" type="text" name="order_id" id="order_id"
+				           placeholder="Order ID" value="{{order_id}}">
+			    </div>
+			    <div class="col-md-6 form-group">
+				    <label for="receipt_id">Receipt ID</label>
+				    <input disabled class="form-control" type="text" name="receipt_id" id="receipt_id"
+				           placeholder="Receipt ID" value="{{receipt_id}}">
+			    </div>
+		    </div>
+	    </fieldset>
+	    <fieldset>
+		    <legend>Swag</legend>
+		    <div class="row">
+			    <div class="col-md-6 form-group">
+				    <label for="shirt1">T-Shirt (Size)</label>
+				    <input disabled class="form-control" type="text" name="shirt1" id="shirt1"
+				           placeholder="T-Shirt (Size)" value="{{shirt1}}">
+			    </div>
+			    <div class="col-md-6 form-group">
+				    <label for="shirt2">Hoodie (Size)</label>
+				    <input disabled class="form-control" type="text" name="shirt2" id="shirt2"
+				           placeholder="Hoodie (Size)" value="{{shirt2}}">
+			    </div>
+		    </div>
+		    <div class="form-group">
+			    <label for="swag">Swag</label>
+			    <input disabled class="form-control" type="text" name="swag" id="swag"
+			           placeholder="Swag" value="{{swag}}">
+		    </div>
+	    </fieldset>
+	    <fieldset>
+		    <legend>Notes</legend>
+		    <div class="form-group">
+			    <TEXTAREA class="form-control" name="notes" id="notes" placeholder="Notes">{{notes}}</textarea>
+		    </div>
+	    </fieldset>
+        <div class="form-actions">
+            <a class="btn btn-default cancel"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+            <a class="btn btn-primary claim"><i class="glyphicon glyphicon-search"></i> Claim</a>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Ticket Claimed</h4>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<p>The ticket with ID #{{id}} has been claimed. Please verify the ticket level, give appropriate swag (if applicable) and pony on!
+					<div class="row col-md-10 col-md-offset-1">
+                        <div class="col-md-4 form-group">
+                            <label for="type">Type</label>
+                            <select disabled class="form-control" name="type" id="type">
+                                {{#each types}}
+                                    {{#with this}}
+                                        <option value="{{value}}"{{selected}}>{{label}}</option>
+                                    {{/with}}
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group">
+	                        <label for="quantity">Quantity</label>
+	                        <input disabled class="form-control" type="text" name="quantity" id="quantity"
+	                               placeholder="Quantity" value="{{quantity}}">
+                        </div>
+                        <div class="col-md-2 form-group">
+							<label for="shirt1">T-Shirt (Size)</label>
+							<input disabled class="form-control" type="text" name="shirt1" id="shirt1"
+							       placeholder="T-Shirt (Size)" value="{{shirt1}}">
+						</div>
+						<div class="col-md-2 form-group">
+							<label for="shirt2">Hoodie (Size)</label>
+							<input disabled class="form-control" type="text" name="shirt2" id="shirt2"
+							       placeholder="Hoodie (Size)" value="{{shirt2}}">
+						</div>
+					</div>
+					<div class="row col-md-10 col-md-offset-1">
+						<label for="swag">Swag</label>
+						<input disabled class="form-control" type="text" name="swag" id="swag"
+						       placeholder="Swag" value="{{swag}}">
+					</div></div>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary finish">Finish</a>
+			</div>
+		</div>
+	</div>
+</div>

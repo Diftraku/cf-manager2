@@ -1,0 +1,27 @@
+<div class="col-md-8 col-md-offset-2">
+	<h3>Ticket Import</h3>
+    <p>When importing ticket data from Holvi, make sure to choose the correct ticket type or the processing will fail.</p>
+	<form>
+		<fieldset>
+			<div class="row">
+				<div class="col-md-6 form-group">
+					<label for="file_import">File</label>
+					<input class="form-control" type="file" name="file_import[]"
+					       id="file_import" placeholder="Exported File from Holvi">
+				</div>
+				<div class="col-md-3 form-group">
+					<label for="file_type">Type</label>
+					<select class="form-control" name="file_type[]" id="file_type">
+						{{#each types}}
+						<option value="{{value}}">{{label}}</option>
+                        {{/each}}
+					</select>
+				</div>
+			</div>
+		</fieldset>
+		<div class="form-actions">
+			<a class="btn btn-default back"><i class="glyphicon glyphicon-th-list"></i> Back</a>
+    		<a class="btn btn-primary process"><i class="glyphicon glyphicon-ok"></i> Process</a>
+		</div>
+	</form>
+</div>

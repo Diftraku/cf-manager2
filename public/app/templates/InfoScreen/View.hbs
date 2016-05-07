@@ -1,0 +1,155 @@
+<div class="col-md-8 col-md-offset-2">
+    <h3>Ticket #{{id}}</h3>
+    <form>
+        <fieldset>
+            <legend>Contact Details</legend>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="first_name">First Name</label>
+                    <input class="form-control" type="text" name="first_name"
+                    id="first_name" placeholder="First Name" value="{{first_name}}">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="last_name">Last Name</label>
+                    <input class="form-control" type="text" name="last_name" id="last_name"
+                    placeholder="Last Name" value="{{last_name}}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address">Street Address</label>
+
+                <input class="form-control" type="text" name="address" id="address"
+                placeholder="Street Address" value="{{address}}">
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label for="postal_code">Postal Code</label>
+
+                    <input class="form-control" type="text" name="postal_code"
+                    id="postal_code" placeholder="Postal Code" value="{{postal_code}}">
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="city">City</label>
+
+                    <input class="form-control" type="text" name="city" id="city"
+                    placeholder="City" value="{{city}}">
+                </div>
+                <div class="col-md-5 form-group">
+                    <label for="country">Country</label>
+
+                    <input class="form-control" type="text" name="country" id="country"
+                    placeholder="Country" value="{{country}}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+
+                <input class="form-control" type="email" name="email" id="email"
+                placeholder="E-mail" value="{{email}}">
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Ticket</legend>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label for="type">Type</label>
+                    <select class="form-control" name="type" id="type">
+                        {{#each types}}
+                            {{#with this}}
+                            <option value="{{value}}"{{selected}}>{{label}}</option>
+                            {{/with}}
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="hash">Hash</label>
+                    <input disabled class="form-control" type="text" name="hash" id="hash" placeholder="Hash"
+                           value="{{hash}}">
+                </div>
+                <div class="col-md-3">
+                    <label for="check">Check</label>
+                    <input disabled class="form-control" type="text" name="check" id="check" placeholder="Check"
+                           value="{{check}}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control" name="status" id="status">
+                        {{#each states}}
+                        {{#with this}}
+                        <option value="{{value}}"{{selected}}>{{label}}</option>
+                        {{/with}}
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="col-md-2 form-group">
+                    <label for="order_id">Quantity</label>
+                    <input class="form-control" type="text" name="quantity" id="quantity"
+                    placeholder="Quantity" value="{{quantity}}">
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="reference">Reference</label>
+                    <input class="form-control" type="text" name="reference" id="reference"
+                    placeholder="Reference" value="{{reference}}">
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="claimed">Claimed</label>
+                    <select class="form-control" name="claimed" id="claimed">
+                        <option value="0">No</option>
+                        <option value="1"{{claimed}}>Yes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="order_id">Order ID</label>
+                    <input class="form-control" type="text" name="order_id" id="order_id"
+                    placeholder="Order ID" value="{{order_id}}">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="receipt_id">Receipt ID</label>
+                    <input class="form-control" type="text" name="receipt_id" id="receipt_id"
+                    placeholder="Receipt ID" value="{{receipt_id}}">
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Swag</legend>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="shirt1">T-Shirt (Size)</label>
+                    <input class="form-control" type="text" name="shirt1" id="shirt1"
+                    placeholder="T-Shirt (Size)" value="{{shirt1}}">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="shirt2">Hoodie (Size)</label>
+                    <input class="form-control" type="text" name="shirt2" id="shirt2"
+                    placeholder="Hoodie (Size)" value="{{shirt2}}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="swag">Swag</label>
+                <input class="form-control" type="text" name="swag" id="swag"
+                placeholder="Swag" value="{{swag}}">
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Notes</legend>
+            <div class="form-group">
+                <textarea class="form-control" name="notes" id="notes" placeholder="Notes">{{notes}}</textarea>
+            </div>
+        </fieldset>
+        <input type="hidden" name="id" value="{{id}}">
+        <div class="form-actions">
+            <a class="btn btn-default back"><i class="glyphicon glyphicon-th-list"></i> Back</a>
+            {{#if edit}}
+            <a class="btn btn-default cancel"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+            <a class="btn btn-primary save"><i class="glyphicon glyphicon-ok"></i> Save</a>
+            {{else}}
+	        <a class="btn btn-default print"><i class="glyphicon glyphicon-print"></i> Print</a>
+            <a class="btn btn-default edit"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+            {{/if}}
+        </div>
+    </form>
+</div>

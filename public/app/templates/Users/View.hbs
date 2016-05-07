@@ -1,0 +1,57 @@
+<div class="col-md-8 col-md-offset-2">
+    <h3>User #{{id}}</h3>
+    <form>
+        <fieldset>
+            <legend>User Details</legend>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="username">Username</label>
+                    <input class="form-control" type="text" name="username"
+                    id="username" placeholder="Username" value="{{username}}">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" type="text" name="name" id="name"
+                    placeholder="Name" value="{{name}}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+
+                <input class="form-control" type="email" name="email" id="email"
+                placeholder="E-mail" value="{{email}}">
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="password_new">New Password</label>
+                    <input class="form-control" type="password" name="password_new" id="password_new"
+                    placeholder="New Password">
+                </div>
+                <div class="col-md-6 form-group">
+	                <label for="password_new_repeat">New Password (Repeat)</label>
+	                <input class="form-control" type="password" name="password_new_repeat" id="password_new_repeat"
+                       placeholder="New Password (Repeat)">
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="password_verify">Enter your password to verify changes</label>
+                    <input class="form-control" type="text" name="shirt1" id="shirt1"
+                    placeholder="T-Shirt (Size)" value="{{shirt1}}">
+                </div>
+            </div>
+        </fieldset>
+        <input type="hidden" name="id" value="{{id}}">
+        <div class="form-actions">
+            <a class="btn btn-default back"><i class="glyphicon glyphicon-th-list"></i> Back</a>
+            {{#if edit}}
+            <a class="btn btn-default cancel"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+            <a class="btn btn-primary save"><i class="glyphicon glyphicon-ok"></i> Save</a>
+            {{else}}
+            <a class="btn btn-default edit"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+            {{/if}}
+        </div>
+    </form>
+</div>

@@ -1,0 +1,45 @@
+body {
+	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+/*.alert {
+	position: fixed;
+	top: 5px;
+	z-index: 9999;
+	display: none;
+    padding-bottom: 5px;
+}*/
+.alert span.body strong {
+    float: left;
+    width: 80px;
+}
+.alert span.body span {
+    margin-left: 80px;
+}
+span.glyphicon, i.glyphicon {
+	position: relative;
+	top: 2px;
+}
+li.user-menu>a {
+	padding: 9px 15px !important;
+}
+li.user-menu>a span.avatar {
+	background-color: white;
+	display: inline-block;
+	border-radius: 3px;
+	line-height: 30px;
+}
+li.user-menu>a span.username {
+	display: inline-block;
+	line-height: 30px;
+}
+li.user-menu>a span.username:first-letter {
+	text-transform: uppercase;
+}
+.btn .checkbox-inline {
+    padding-top: 0 !important;
+    line-height: 19px !important;
+}
+.btn .checkbox-inline {
+    padding-top: 0 !important;
+    line-height: 19px !important;
+}
