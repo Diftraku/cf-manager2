@@ -8,7 +8,9 @@
  */
 
 // Basic directories
+define('CF_DIR_CACHE', __DIR__ . '/../cache/');
 define('CF_DIR_DATA', __DIR__ . '/../data/');
+define('CF_DIR_IMG', __DIR__ . '/../public/img/');
 define('CF_DIR_LIB', __DIR__ . '/../lib/');
 define('CF_DIR_LOGS', __DIR__ . '/../logs/');
 define('CF_DIR_PUBLIC', __DIR__ . '/../public/');
