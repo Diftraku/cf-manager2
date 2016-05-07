@@ -8,9 +8,11 @@
 
 namespace CFM2\Controllers;
 
+use CFM2\Utilities\FormatResponse;
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use RedBeanPHP\RedException\SQL as RedExceptionSQL;
 use \R;
 
 class User
@@ -32,9 +34,10 @@ class User
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function loginUser( Request $request, Response $response, $args = [] ) {
-        $response->withStatus(501)->withJson(['message' => 'Not implemented']);
+        return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
     }
 
     /**
@@ -44,9 +47,10 @@ class User
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function logoutUser( Request $request, Response $response, $args = [] ) {
-        $response->withStatus(501)->withJson(['message' => 'Not implemented']);
+        return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
     }
 
     /**
@@ -56,6 +60,7 @@ class User
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function getUsers( Request $request, Response $response, $args = [] ) {
         // Grab parameters from the request
@@ -87,13 +92,13 @@ class User
         try {
             $userCount = R::count('user');
             $users = R::findAndExport('user', 'LIMIT ? OFFSET ? ORDER BY ? ?', [$limit, $offset, $order_by, $order_direction]);
-            $response->withJson(['users' => $users, 'count' => $userCount]);
+            return $response->withJson(new FormatResponse(['users' => $users, 'count' => $userCount]));
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['offset' => $offset, 'limit' => $limit, 'filter' => $filter, 'order_by' => $order_by, 'order_direction' => $order_direction];
             $this->ci->get('logger')->error(sprintf('getUsers: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -108,6 +113,7 @@ class User
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function getUser( Request $request, Response $response, $args = [] ) {
         $id = $args['id'];
@@ -116,18 +122,26 @@ class User
         try {
             if (!is_null($id)) {
                 $id = intval($id);
-                $user = R::findOne('user', 'WHERE id = ?', [$id])->export();
-                $response->withJson($user);
+                $user = R::findOne('user', 'WHERE id = ?', [$id]);
+                if (!is_null($user)) {
+                    $this->ci->get('logger')->debug(sprintf('getUser: %s', 'Retrieved user'), ['id' => $id]);
+                    return $response->withJson(new FormatResponse($user->export()));
+                }
+                else {
+                    $message = 'User not found';
+                    $this->ci->get('logger')->notice(sprintf('getUser: %s', $message), ['id' => $id]);
+                    return $response->withStatus(400)->withJson(new FormatResponse([], 404, $message));
+                }
             }
             else {
-                $response->withStatus(400)->withJson(['message' => 'Required parameter `id` missing']);
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
             }
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id];
             $this->ci->get('logger')->error(sprintf('getUser: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -142,6 +156,7 @@ class User
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function updateUser( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
@@ -154,20 +169,27 @@ class User
             if (!is_null($id)) {
                 $id = intval($id);
                 $user = R::findOne('user', 'WHERE id = ?', [$id]);
-                $user->import($params);
-                R::store($user);
-                $this->ci->get('logger')->info(sprintf('updateUser: %s %s', 'Updated user with ID ', $id), $params);
-                $response->withJson($user);
+                if (!is_null($user)) {
+                    $user->import($params);
+                    R::store($user);
+                    $this->ci->get('logger')->info(sprintf('updateUser: %s %s', 'Updated user with ID ', $id), $params);
+                    return $response->withJson(new FormatResponse($user));
+                }
+                else {
+                    $message = 'User not found';
+                    $this->ci->get('logger')->notice(sprintf('updateUser: %s', $message), ['id' => $id]);
+                    return $response->withStatus(400)->withJson(new FormatResponse([], 404, $message));
+                }
             }
             else {
-                $response->withStatus(400)->withJson(['message' => 'Required parameter `id` missing']);
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
             }
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id, 'params' => $params];
             $this->ci->get('logger')->error(sprintf('updateUser: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -182,6 +204,7 @@ class User
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function createUser( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
@@ -194,14 +217,13 @@ class User
             $ticket->import($params);
             $id = R::store($ticket);
             $this->ci->get('logger')->info(sprintf('createUser: %s %s', 'Created new user with ID ', $id), $params);
-            // @TODO Standardize the response format (payload,message,code etc.)
-            $response->withJson(['status' => 'success', 'id' => $id]);
+            return $response->withJson(new FormatResponse(['id' => $id]));
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['params' => $params];
             $this->ci->get('logger')->error(sprintf('createUser: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet

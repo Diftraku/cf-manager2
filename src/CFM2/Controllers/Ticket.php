@@ -9,11 +9,14 @@
 
 namespace CFM2\Controllers;
 
+use CFM2\Utilities\FormatResponse;
+use CFM2\Utilities\PDFTemplate;
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use RedBeanPHP\RedException\SQL as RedExceptionSQL;
 use \R;
+use TCPDF2DBarcode;
 
 class Ticket
 {
@@ -34,6 +37,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function getTickets( Request $request, Response $response, $args = [] ) {
         // Grab parameters from the request
@@ -65,13 +69,13 @@ class Ticket
         try {
             $ticketCount = R::count('ticket');
             $tickets = R::findAndExport('ticket', 'LIMIT ? OFFSET ? ORDER BY ? ?', [$limit, $offset, $order_by, $order_direction]);
-            $response->withJson(['tickets' => $tickets, 'count' => $ticketCount]);
+            return $response->withJson(new FormatResponse(['tickets' => $tickets, 'count' => $ticketCount]));
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['offset' => $offset, 'limit' => $limit, 'filter' => $filter, 'order_by' => $order_by, 'order_direction' => $order_direction];
             $this->ci->get('logger')->error(sprintf('getTickets: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -86,6 +90,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function getTicket( Request $request, Response $response, $args = [] ) {
         $id = $args['id'];
@@ -94,19 +99,174 @@ class Ticket
         try {
             if (!is_null($id)) {
                 $id = intval($id);
-                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id])->export();
-                $response->withJson($ticket);
-                $this->ci->get('logger')->info(sprintf('getTicket: %s', 'Retrieved ticket'), ['id' => $id]);
+                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
+                if (!is_null($ticket)) {
+                    $this->ci->get('logger')->debug(sprintf('getTicket: %s', 'Retrieved ticket'), ['id' => $id]);
+                    return $response->withJson(new FormatResponse($ticket->export()));
+                }
+                else {
+                    $message = 'Ticket not found';
+                    $this->ci->get('logger')->notice(sprintf('getTicket: %s', $message), ['id' => $id]);
+                    return $response->withStatus(404)->withJson(new FormatResponse([], 404, $message));
+                }
             }
             else {
-                $response->withStatus(400)->withJson(['message' => 'Required parameter `id` missing']);
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
             }
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id];
             $this->ci->get('logger')->error(sprintf('getTicket%s: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
+        }
+        finally {
+            // Flush the toilet
+            R::close();
+        }
+    }
+
+    /**
+     * getTicketPD
+     * Get a single ticket PDF by parameter (ID)
+     * @method GET
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return static
+     */
+    public function getTicketPDF( Request $request, Response $response, $args = [] ) {
+        $id = $args['id'];
+
+        // Showtime!
+        try {
+            if (!is_null($id)) {
+                $id = intval($id);
+                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
+                if (!is_null($ticket)) {
+                    //$ticket->export();
+                    $pdf = new PDFTemplate();
+                    $pdf->SetFont('dejavusansmono', '', 12);
+                    $pdf->SetTitle('Crystal Fair Ticket for ' . $ticket->first_name . ' ' . $ticket->last_name);
+
+                    $pdf->AddPage();
+                    $pdf->MultiCell(
+                        90,
+                        15,
+                        $ticket->first_name . ' ' . $ticket->last_name . "\n" .
+                        $ticket->address . "\n" .
+                        $ticket->postal_code . ' ' . $ticket->city . "\n" .
+                        $ticket->country . "\n" . "\n" .
+                        $ticket->email,
+                        0,
+                        'L',
+                        false,
+                        0
+                    );
+                    $more = '';
+                    /*list($shirt1, $shirt2) = \CrystalFair\Metadata\TicketTypes::getShirts($ticket->type);
+                    if ($shirt1) {
+                        $more .= 'T-Shirt:  ' . $ticket->shirt1 . "\n";
+                    }
+                    if ($shirt2) {
+                        $more .= 'Hoodie:   ' . $ticket->shirt2;
+                    }
+                    $pdf->MultiCell(
+                        90,
+                        15,
+                        'Type:     ' . \CrystalFair\Metadata\TicketTypes::getLabel($ticket->type) . "\n" .
+                        'Quantity: ' . $ticket->quantity . "\n" .
+                        $more,
+                        0,
+                        'L',
+                        false,
+                        1
+                    );*/
+                    $pdf->Ln(90);
+                    $pdf->write2DBarcode($ticket->hash, 'QRCODE,H', 75, 70, 60, 60);
+                    $pdf->SetFont('dejavusansmono', 'B', 32);
+                    $pdf->Cell(0, 20, implode(' ', str_split($ticket->check)), 0, 1, 'C');
+
+                    $pdf->setFooterFont(array('dejavusanscondensed', '', 12));
+                    $pdf->SetFont('dejavusansmono', '', 12);
+                    //$pdf->Footer();
+
+                    /*$ab = substr($ticket->hash, 0, 2);
+                    $cd = substr($ticket->hash, 2, 2);
+                    $file = CF_DIR_CACHE . '/' . $ab . '/' . $cd . '/' . $ticket->hash . '.pdf';
+                    if (!file_exists(dirname($file))) {
+                        mkdir(dirname($file), 0755, true);
+                    }*/
+                    //$data = $pdf->Output('', 'S');
+                    $this->ci->get('logger')->debug(sprintf('getTicketPDF: %s', 'Retrieved ticket'), ['id' => $id]);
+                    $response->getBody()->write($pdf->Output('', 'S'));
+                    return $response->withHeader('Content-type', 'application/pdf')->withHeader('Content-Disposition', 'inline')->withHeader('Content-Transfer-Encoding', 'binary');
+                }
+                else {
+                    $message = 'Ticket not found';
+                    $response->getBody()->write('<html><head><title>'.$message.'</title></head><body><h1>'.$message.'</h1></body></html>');
+                    $this->ci->get('logger')->notice(sprintf('getTicketPDF: %s', $message), ['id' => $id]);
+                    return $response->withStatus(404);
+                }
+            }
+            else {
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
+            }
+        }
+        catch (RedExceptionSQL $e) {
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $params = ['id' => $id];
+            $this->ci->get('logger')->error(sprintf('getTicketPDF%s: %s', $message), $params);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
+        }
+        finally {
+            // Flush the toilet
+            R::close();
+        }
+    }
+
+    /**
+     * getTicketQR
+     * Get a single ticket's QR code by parameter (ID)
+     * @method GET
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return static
+     */
+    public function getTicketQR( Request $request, Response $response, $args = [] ) {
+        $id = $args['id'];
+
+        // Showtime!
+        try {
+            if (!is_null($id)) {
+                $id = intval($id);
+                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
+                if (!is_null($ticket)) {
+                    $hash = $ticket->export()['hash'];
+                    $qr = new TCPDF2DBarcode($hash, 'QRCODE,H');
+                    $response->write($qr->getBarcodePngData(6, 6));
+                    $this->ci->get('logger')->debug(sprintf('getTicketQR: %s', 'Retrieved ticket'), ['id' => $id]);
+                    return $response->withHeader('Content-type', 'image/png');
+                }
+                else {
+                    $message = 'Ticket not found';
+                    //$response->withStatus(404)->withJson(new FormatResponse([], 404, $message));
+                    $body = $response->getBody();
+                    $body->write('<html><head><title>'.$message.'</title></head><body><h1>'.$message.'</h1></body></html>');
+                    $this->ci->get('logger')->notice(sprintf('getTicketPDF: %s', $message), ['id' => $id]);
+                    return $response->withStatus(404);
+                }
+            }
+            else {
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
+            }
+        }
+        catch (RedExceptionSQL $e) {
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $params = ['id' => $id];
+            $this->ci->get('logger')->error(sprintf('getTicketPDF%s: %s', $message), $params);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -121,6 +281,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function updateTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
@@ -133,20 +294,27 @@ class Ticket
             if (!is_null($id)) {
                 $id = intval($id);
                 $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
-                $ticket->import($params);
-                R::store($ticket);
-                $this->ci->get('logger')->info(sprintf('updateTicket: %s %s', 'Updated ticket with ID ', $id), $params);
-                $response->withJson($ticket);
+                if (!is_null($ticket)) {
+                    $ticket->import($params);
+                    R::store($ticket);
+                    $this->ci->get('logger')->info(sprintf('updateTicket: %s %s', 'Updated ticket with ID ', $id), $params);
+                    return $response->withJson(new FormatResponse($ticket->export()));
+                }
+                else {
+                    $message = 'Ticket not found';
+                    $this->ci->get('logger')->notice(sprintf('updateTicket: %s', $message), ['id' => $id]);
+                    return $response->withStatus(404)->withJson(new FormatResponse([], 404, $message));
+                }
             }
             else {
-                $response->withStatus(400)->withJson(['message' => 'Required parameter `id` missing']);
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
             }
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['id' => $id, 'params' => $params];
             $this->ci->get('logger')->error(sprintf('updateTicket: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -161,9 +329,10 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function updateTickets( Request $request, Response $response, $args = [] ) {
-        $response->withStatus(501)->withJson(['message' => 'Not implemented']);
+        return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
     }
 
 
@@ -174,6 +343,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function createTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
@@ -186,14 +356,13 @@ class Ticket
             $ticket->import($params);
             $id = R::store($ticket);
             $this->ci->get('logger')->info(sprintf('createTicket%s: %s %s', json_encode($params), 'Created new ticket with ID ', $id));
-            // @TODO Standardize the response format (payload,message,code etc.)
-            $response->withJson(['status' => 'success', 'id' => $id]);
+            return $response->withJson(new FormatResponse(['id' => $id]));
         }
         catch (RedExceptionSQL $e) {
             $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
             $params = ['params' => $params];
             $this->ci->get('logger')->error(sprintf('createTicket: %s', $message), $params);
-            $response->withStatus(500)->withJson(['message' => $message]);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
         }
         finally {
             // Flush the toilet
@@ -208,8 +377,9 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
+     * @return static
      */
     public function createTickets( Request $request, Response $response, $args = [] ) {
-        $response->withStatus(501)->withJson(['message' => 'Not implemented']);
+        return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
     }
 }

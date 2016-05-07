@@ -12,7 +12,7 @@ use TCPDF;
 
 define ('K_PATH_IMAGES', CF_DIR_IMAGES.'/');
 
-class PDFLayout extends TCPDF {
+class PDFTemplate extends TCPDF {
 
     public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8', $diskcache=false, $pdfa=true) {
         parent::__construct($orientation, $unit, $format, $unicode, $encoding, $diskcache, $pdfa);

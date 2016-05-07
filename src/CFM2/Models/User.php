@@ -44,7 +44,7 @@ class User extends SimpleModel
         if($this->bean->hasChanged('password')) {
             $this->bean->password = password_hash($this->bean->password, CF_PASS_ALGO);
         }
-        if(!is_null($this->bean->id)) {
+        if($this->bean->id > 0) {
             $this->bean->modified_on = time();
             // @TODO Add username from the editor
             $this->bean->modified_by = '';
