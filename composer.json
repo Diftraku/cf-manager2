@@ -19,6 +19,9 @@
     "tuupola/slim-basic-auth": "^2.0",
     "tecnickcom/tcpdf": "^6.0.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "4.*"
+  },
   "autoload": {
     "psr-0": {
       "CFM2\\": "src/"
