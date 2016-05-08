@@ -31,24 +31,8 @@ else {
 }
 $app = new \Slim\App($settings);
 
-// Set up the database connection
-$db_type = explode(':', CF_DB_DSN)[0];
-if (in_array($db_type, ['pgsql','mysql','cubrid'])) {
-    // PostgreSQL, MySQL and CUBRID require username and password
-    R::setup(CF_DB_DSN, CF_DB_USERNAME, CF_DB_PASSWORD);
-}
-else {
-    // The rest (ie. SQLite) does not require creds
-    R::setup(CF_DB_DSN);
-}
-// Set up dependencies
-require __DIR__ . '/../src/dependencies.php';
-
-// Register middleware
-require __DIR__ . '/../src/middleware.php';
-
-// Register routes
-require __DIR__ . '/../src/routes.php';
+// Require our middleware, dependencies, routes and the works
+require CF_DIR_SRC . 'app.php';
 
 // Run app
 $app->run();

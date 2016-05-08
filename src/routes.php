@@ -7,7 +7,7 @@ use Slim\Http\Response;
 
 $app->get('/', function ($request, $response, $args) {
     // Sample log message
-    $this->logger->info("Slim-Skeleton '/' route");
+    $this->logger->debug('frontend: Loading frontend');
 
     // Render index view
     return $this->renderer->render($response, 'index.phtml', $args);
@@ -17,7 +17,9 @@ $app->group('/ticket', function () {
     $this->get('', '\CFM2\Controllers\Ticket:getTickets');
     $this->get('/{id:[0-9]+}', '\CFM2\Controllers\Ticket:getTicket');
     $this->get('/{id:[0-9]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
-    $this->get('/{id:[0-9]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');
+    $this->get('/{id:[0-9]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');/*
+    $this->get('/{id:[0-9a-z]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
+    $this->get('/{id:[0-9a-z]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');*/
     $this->put('/{id:[0-9]+}', '\CFM2\Controllers\Ticket:updateTicket');
     $this->post('', '\CFM2\Controllers\Ticket:createTicket');
 });
