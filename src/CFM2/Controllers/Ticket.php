@@ -37,7 +37,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function getTickets( Request $request, Response $response, $args = [] ) {
         // Grab parameters from the request
@@ -45,7 +45,7 @@ class Ticket
             intval($request->getQueryParam('offset', 0)),
             intval($request->getQueryParam('limit', 20)),
             $request->getQueryParam('filter', ''),
-            $request->getQueryParam('order_by', 'created')
+            $request->getQueryParam('order_by', 'created_on')
         ];
 
         // Get sort direction
@@ -58,8 +58,8 @@ class Ticket
         $limit = ($limit > 60) ? 60 : $limit;
 
         // Verify the column to order by
-        if (!in_array($order_by, ['last_name', 'first_name', 'email', 'city', 'country', 'created'])) {
-            $order_by = 'created';
+        if (!in_array($order_by, ['last_name', 'first_name', 'email', 'city', 'country', 'created_on', 'modified_on'])) {
+            $order_by = 'created_on';
         }
 
         // @TODO Filtering tickets (ie. search)
@@ -68,7 +68,9 @@ class Ticket
         // Showtime!
         try {
             $ticketCount = R::count('ticket');
-            $tickets = R::findAndExport('ticket', 'LIMIT ? OFFSET ? ORDER BY ? ?', [$limit, $offset, $order_by, $order_direction]);
+            $tickets = R::findAndExport('ticket');
+            //$tickets = R::findAll('ticket', sprintf('LIMIT ?, ? ORDER BY `%s` %s', $order_by, $order_direction), [$limit, $offset]);
+            $this->ci->get('logger')->debug(var_export($tickets, true));
             return $response->withJson(new FormatResponse(['tickets' => $tickets, 'count' => $ticketCount]));
         }
         catch (RedExceptionSQL $e) {
@@ -90,7 +92,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function getTicket( Request $request, Response $response, $args = [] ) {
         $id = $args['id'];
@@ -133,7 +135,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function getTicketPDF( Request $request, Response $response, $args = [] ) {
         $id = $args['id'];
@@ -147,7 +149,7 @@ class Ticket
                     //$ticket->export();
                     $pdf = new PDFTemplate();
                     $pdf->SetFont('dejavusansmono', '', 12);
-                    $pdf->SetTitle('Crystal Fair Ticket for ' . $ticket->first_name . ' ' . $ticket->last_name);
+                    $pdf->SetTitle('Ticket for ' . $ticket->first_name . ' ' . $ticket->last_name);
 
                     $pdf->AddPage();
                     $pdf->MultiCell(
@@ -232,7 +234,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function getTicketQR( Request $request, Response $response, $args = [] ) {
         $id = $args['id'];
@@ -281,7 +283,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function updateTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
@@ -329,7 +331,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function updateTickets( Request $request, Response $response, $args = [] ) {
         return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
@@ -343,7 +345,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function createTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
@@ -377,7 +379,7 @@ class Ticket
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return static
+     * @return Response
      */
     public function createTickets( Request $request, Response $response, $args = [] ) {
         return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));

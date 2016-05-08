@@ -21,9 +21,11 @@ class Ticket extends SimpleModel
         $this->bean->first_name = '';
         $this->bean->last_name = '';
         $this->bean->email = '';
-        $this->bean->type = null;
+        $this->bean->status = 1;
+        $this->bean->type = 1;
+        $this->bean->event_id = 1;
         $this->bean->hash = '';
-        $this->bean->created_on = time();
+        $this->bean->created_on = date("Y-m-d H:i:s");
         // @TODO Add username from the creator
         $this->bean->created_by = 'system';
         $this->bean->modified_on = '';
@@ -39,7 +41,7 @@ class Ticket extends SimpleModel
             $this->bean->hash = sha1(uniqid(time(), true));
         }
         if($this->bean->id > 0) {
-            $this->bean->modified_on = time();
+            $this->bean->modified_on = date("Y-m-d H:i:s");
             // @TODO Add username from the editor
             $this->bean->modified_by = 'system';
         }

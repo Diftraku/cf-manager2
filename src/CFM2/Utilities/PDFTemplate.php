@@ -10,7 +10,7 @@ namespace CFM2\Utilities;
 
 use TCPDF;
 
-define ('K_PATH_IMAGES', CF_DIR_IMAGES.'/');
+define ('K_PATH_IMAGES', CF_DIR_IMG.'/');
 
 class PDFTemplate extends TCPDF {
 
@@ -26,7 +26,7 @@ class PDFTemplate extends TCPDF {
         $this->SetCreator('CF-Manager2');
         $this->SetAuthor('CF-Manager2');
         $this->SetSubject('CF-Manager2 Ticket');
-        //$this->SetHeaderData('logo_print.png', 50, 'Crystal Fair 2014', 'Event Ticket');
+        //$this->SetHeaderData('logo_print.png', 50, 'CF-Manager 2', 'Ticket');
     }
 
     public function Footer() {

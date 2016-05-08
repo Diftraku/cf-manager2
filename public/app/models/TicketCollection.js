@@ -5,7 +5,7 @@ define(["models/Ticket", "jquery", "backbone", "paginator"],
             paginator_core : {
                 type : 'GET',
                 dataType : 'json',
-                url : '/api/tickets'
+                url : '/ticket'
             },
             paginator_ui : {
                 firstPage : 1,
@@ -26,20 +26,24 @@ define(["models/Ticket", "jquery", "backbone", "paginator"],
             },
             parse : function(response) {
                 var tickets, count;
-                if (response.hasOwnProperty('tickets')) {
-                    tickets = response.tickets;
+                if (response.hasOwnProperty('data')) {
+                    var data = response.data;
+                    if (data.hasOwnProperty('tickets')) {
+                        tickets = data.tickets;
+                    }
+                    if (data.hasOwnProperty('count')) {
+                        count = data.count;
+                    }
+                    console.log(tickets, count);
+                    this.totalPages = Math.ceil(count / this.perPage);
+                    this.pagination = {
+                        page: this.currentPage,
+                        pageCount: this.totalPages,
+                        isLastPage: this.currentPage == this.lastPage,
+                        isFirstPage: this.currentPage == this.paginator_ui.firstPage
+                    };
+                    return tickets;
                 }
-                if (response.hasOwnProperty('count')) {
-                    count = response.count;
-                }
-                this.totalPages = Math.ceil(count / this.perPage);
-                this.pagination = {
-                    page: this.currentPage,
-                    pageCount: this.totalPages,
-                    isLastPage: this.currentPage == this.lastPage,
-                    isFirstPage: this.currentPage == this.paginator_ui.firstPage
-                };
-                return tickets;
             }
         });
     }

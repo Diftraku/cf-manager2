@@ -28,7 +28,7 @@ class User extends SimpleModel
         $this->bean->email = '';
         $this->bean->enabled = true;
         $this->bean->role = 'user';
-        $this->bean->created_on = time();
+        $this->bean->created_on = date("Y-m-d H:i:s");
         // @TODO Add username from the creator
         $this->bean->created_by = '';
         $this->bean->modified_on = '';
@@ -45,7 +45,7 @@ class User extends SimpleModel
             $this->bean->password = password_hash($this->bean->password, CF_PASS_ALGO);
         }
         if($this->bean->id > 0) {
-            $this->bean->modified_on = time();
+            $this->bean->modified_on = date("Y-m-d H:i:s");
             // @TODO Add username from the editor
             $this->bean->modified_by = '';
         }

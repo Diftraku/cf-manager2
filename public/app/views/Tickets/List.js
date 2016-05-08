@@ -18,7 +18,7 @@ define(['jquery', 'hbs!templates/Tickets/List', 'hbs!templates/Tickets/ListItem'
                         statusDescription: window.CFMeta.states[status].description,
                         statusLabel: window.CFMeta.states[status].label,
                         typeLabel: window.CFMeta.types[type].label,
-                        date: new Date(this.model.attributes.date).toLocaleDateString('fi-FI')
+                        createdOn: new Date(this.model.attributes.created_on).toLocaleDateString('en-GB')
                     });
                 }
             }),
