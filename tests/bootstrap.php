@@ -15,7 +15,10 @@ ini_set('display_startup_errors', 1);
 // Set a sane timezone
 date_default_timezone_set('UTC');
 
-use There4\Slim\Test\WebTestCase;
+set_include_path(dirname(__FILE__) . '/../' . PATH_SEPARATOR . get_include_path());
+
+// Prevent session cookies
+ini_set('session.use_cookies', 0);
 
 define('PROJECT_ROOT', realpath(__DIR__ . '/..'));
 
@@ -23,24 +26,8 @@ define('PROJECT_ROOT', realpath(__DIR__ . '/..'));
 require_once PROJECT_ROOT . '/vendor/autoload.php';
 require_once PROJECT_ROOT . '/data/defaults.php';
 require_once CF_DIR_LIB . 'rb.php';
+require_once PROJECT_ROOT . '/tests/config.mock.php';
+require_once CF_DIR_DATA . 'config.dist.php';
 
-// Initiate a local copy of the app under test
-//class LocalWebTestCase extends WebTestCase {
-//    public function getSlimInstance() {
-        require_once PROJECT_ROOT . '/tests/config.mock.php';
-        require_once CF_DIR_DATA . 'config.dist.php';
-        session_start();
 
-        // Instantiate the app
-        $settings_default = require PROJECT_ROOT . '/src/settings.php';
-        if (isset($settings)) {
-            // Merge settings
-            $settings = array_merge($settings_default, $settings);
-        }
-        else {
-            $settings = $settings_default;
-        }
-        $app = new \Slim\App($settings);
-        return $app;
-//    }
-//};
+session_start();

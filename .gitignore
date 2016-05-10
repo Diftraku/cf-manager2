@@ -5,6 +5,7 @@ composer.phar
 # Temp
 /temp/
 /logs/
+/build/
 
 # Configuration
 /data/*
