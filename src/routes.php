@@ -17,10 +17,11 @@ $app->group('/ticket', function () {
     $this->get('', '\CFM2\Controllers\Ticket:getTickets');
     $this->get('/{id:[0-9]+}', '\CFM2\Controllers\Ticket:getTicket');
     $this->get('/{id:[0-9]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
-    $this->get('/{id:[0-9]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');/*
-    $this->get('/{id:[0-9a-z]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
+    $this->get('/{id:[0-9]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');
+    /*$this->get('/{id:[0-9a-z]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
     $this->get('/{id:[0-9a-z]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');*/
     $this->put('/{id:[0-9]+}', '\CFM2\Controllers\Ticket:updateTicket');
+    $this->delete('/{id:[0-9]+}', '\CFM2\Controllers\Ticket:deleteTicket');
     $this->post('', '\CFM2\Controllers\Ticket:createTicket');
 });
 $app->group('/user', function () {

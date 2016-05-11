@@ -7,8 +7,8 @@
  * @license https://opensource.org/licenses/MIT The MIT License (MIT)
  */
 // Set up the database connection
-$db_type = explode(':', CF_DB_DSN)[0];
-if (in_array($db_type, ['pgsql','mysql','cubrid'])) {
+define('CF_DB_TYPE', explode(':', CF_DB_DSN)[0]);
+if (in_array(CF_DB_TYPE, ['pgsql','mysql','cubrid'])) {
     // PostgreSQL, MySQL and CUBRID require username and password
     R::setup(CF_DB_DSN, CF_DB_USERNAME, CF_DB_PASSWORD);
 }

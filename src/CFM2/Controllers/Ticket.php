@@ -64,13 +64,14 @@ class Ticket
 
         // @TODO Filtering tickets (ie. search)
         // Blatantly copy what Shimmie does?
+        // @TODO Make this into a constant
+        $filter = 'status != 0';
 
         // Showtime!
         try {
-            $ticketCount = R::count('ticket');
-            $tickets = R::findAndExport('ticket');
-            //$tickets = R::findAll('ticket', sprintf('LIMIT ?, ? ORDER BY `%s` %s', $order_by, $order_direction), [$limit, $offset]);
-            $this->ci->get('logger')->debug(var_export($tickets, true));
+            $ticketCount = R::count('ticket', $filter);
+            $query = sprintf('%s ORDER BY `%s` %s LIMIT %d, %d ', $filter, $order_by, $order_direction, $offset, $limit);
+            $tickets = R::find('ticket', $query);
             return $response->withJson(new FormatResponse(['tickets' => $tickets, 'count' => $ticketCount]));
         }
         catch (RedExceptionSQL $e) {
@@ -384,4 +385,67 @@ class Ticket
     public function createTickets( Request $request, Response $response, $args = [] ) {
         return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
     }
+
+    /**
+     * deleteTicket
+     * Delete ticket
+     * @method DELETE
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return Response
+     */
+    public function deleteTicket( Request $request, Response $response, $args = [] ) {
+        // Grab parameter from the request
+        // @TODO Add validation
+        $id = $args['id'];
+
+        // Showtime!
+        try {
+            if (!is_null($id)) {
+                $id = intval($id);
+                $ticket = R::findOne('ticket', 'WHERE id = ?', [$id]);
+                if (!is_null($ticket)) {
+                    // @TODO Implement actual deletion somewhere else, hide the ticket on the UI
+                    //R::trash($ticket);
+                    $ticket->import(['status' => 0]);
+                    R::store($ticket);
+                    $this->ci->get('logger')->info(sprintf('deleteTicket: %s %s', 'Deleted ticket with ID ', $id));
+                    return $response->withJson(new FormatResponse($ticket->export()));
+                }
+                else {
+                    $message = 'Ticket not found';
+                    $this->ci->get('logger')->notice(sprintf('deleteTicket: %s', $message), ['id' => $id]);
+                    return $response->withStatus(404)->withJson(new FormatResponse([], 404, $message));
+                }
+            }
+            else {
+                return $response->withStatus(400)->withJson(new FormatResponse([], 400, 'Required parameter `id` missing'));
+            }
+        }
+        catch (RedExceptionSQL $e) {
+            $message = sprintf('Backend failure: (%s) %s', $e->getSQLState(), $e->getMessage());
+            $params = ['id' => $id];
+            $this->ci->get('logger')->error(sprintf('deleteTicket: %s', $message), $params);
+            return $response->withStatus(500)->withJson(new FormatResponse([], 500, $message));
+        }
+        finally {
+            // Flush the toilet
+            R::close();
+        }
+    }
+
+    /**
+     * deleteTickets
+     * Delete multiple tickets
+     * @method DELETE
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return Response
+     */
+    public function deleteTickets( Request $request, Response $response, $args = [] ) {
+        return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
+    }
+
 }
