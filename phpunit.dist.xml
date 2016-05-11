@@ -20,9 +20,10 @@
     <filter>
         <blacklist>
             <directory suffix=".php">./vendor</directory>
+            <directory suffix=".php">./tests</directory>
         </blacklist>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src</directory>
+            <directory suffix=".php">./src/CFM2</directory>
         </whitelist>
     </filter>
 </phpunit>

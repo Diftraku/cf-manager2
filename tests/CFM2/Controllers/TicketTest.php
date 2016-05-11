@@ -69,8 +69,8 @@ class TicketTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $data['data'], 'Data should have 2 elements');
         $this->assertEquals(4, $data['data']['count'], 'Ticket count should be 4');
 
-        $random = rand(0,3);
-        echo '- entry #' . ($random + 1) . "\n";
+        $random = rand(1,4);
+        echo '- entry #' . ($random) . "\n";
         $data = $data['data']['tickets'][$random];
         $this->assertArrayHasKey('hash', $data, 'Ticket must have hash');
         $this->assertArrayHasKey('id', $data, 'Ticket must have id');
@@ -80,6 +80,81 @@ class TicketTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('__version', $data, 'Metadata must have version');
         $this->assertGreaterThanOrEqual(1, $data['__version'], 'Version must be 1 or higher');
     }
+
+    public function testGetTicketsPaging()
+    {
+        global $app;
+        echo 'Testing testGetTicketsPaging:' . "\n";
+        // instantiate controller
+        $action = new Ticket($app->getContainer());
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket',
+            'QUERY_STRING' => http_build_query(['offset' => 2, 'limit' => 1, 'order_by' => 'not_a_column'])
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->getTickets($request, $response, []);
+        $data = (string)$response->getBody();
+        $data = json_decode($data, true);
+
+        $this->assertSame($data['status'], 'success', 'Status should be success');
+        $this->assertSame($data['code'], 200, 'Code should be 200 (int)');
+        $this->assertArrayHasKey('data', $data, 'JSON response should have `data`-key');
+        $this->assertCount(2, $data['data'], 'Data should have 2 elements');
+        $this->assertEquals(4, $data['data']['count'], 'Ticket count should be 4');
+        $this->assertCount(1, $data['data']['tickets'], 'There should be only a single ticket');
+
+        $data = array_shift($data['data']['tickets']);
+        echo '- entry #' . ($data['id']) . "\n";
+        $this->assertArrayHasKey('hash', $data, 'Ticket must have hash');
+        $this->assertArrayHasKey('id', $data, 'Ticket must have id');
+        $this->assertArrayHasKey('metadata', $data, 'Ticket must have metadata');
+        $data = json_decode($data['metadata'], true);
+        $this->assertArrayHasKey('__version', $data, 'Metadata must have version');
+        $this->assertGreaterThanOrEqual(1, $data['__version'], 'Version must be 1 or higher');
+    }
+
+/*    public function testGetTicketsErrorHandling()
+    {
+        global $app;
+        echo 'Testing testGetTicketsErrorHandling:' . "\n";
+        // instantiate controller
+        $action = new Ticket($app->getContainer());
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->getTickets($request, $response, []);
+        $data = json_decode((string)$response->getBody(), true);
+        var_dump($data);
+
+        $this->assertSame($data['status'], 'success', 'Status should be success');
+        $this->assertSame($data['code'], 200, 'Code should be 200 (int)');
+        $this->assertArrayHasKey('data', $data, 'JSON response should have `data`-key');
+        $this->assertCount(2, $data['data'], 'Data should have 2 elements');
+        $this->assertEquals(4, $data['data']['count'], 'Ticket count should be 4');
+        $this->assertCount(1, $data['data']['tickets'], 'There should be only a single ticket');
+
+        $data = array_shift($data['data']['tickets']);
+        echo '- entry #' . ($data['id']) . "\n";
+        $this->assertArrayHasKey('hash', $data, 'Ticket must have hash');
+        $this->assertArrayHasKey('id', $data, 'Ticket must have id');
+        $this->assertArrayHasKey('metadata', $data, 'Ticket must have metadata');
+        $data = json_decode($data['metadata'], true);
+        $this->assertArrayHasKey('__version', $data, 'Metadata must have version');
+        $this->assertGreaterThanOrEqual(1, $data['__version'], 'Version must be 1 or higher');
+    }*/
 
     public function testGetTicket()
     {
@@ -127,6 +202,33 @@ class TicketTest extends PHPUnit_Framework_TestCase
         $metadata = json_decode($ticket['metadata'], true);
         $this->assertArrayHasKey('__version', $metadata, 'Metadata must have version');
         $this->assertGreaterThanOrEqual(1, $metadata['__version'], 'Version must be 1 or higher');
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket/42'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->getTicket($request, $response, ['id' => 42]);
+
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertEquals('error', $data['status'], 'Status must be error');
+        $this->assertEquals(404, $data['code'], 'Code must be 404 (int)');
+        $this->assertArrayHasKey('message', $data, 'Response must have a message');
+
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+        // run the controller action and test it
+        $response = $action->getTicket($request, $response, []);
+
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertEquals('error', $data['status'], 'Status must be error');
+        $this->assertEquals(400, $data['code'], 'Code must be 400 (int)');
+        $this->assertArrayHasKey('message', $data, 'Response must have a message');
+
     }
 
     public function testCreateTicket()
@@ -191,6 +293,57 @@ class TicketTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('data', $data, 'JSON response should have `data`-key');
         $this->assertCount(2, $data['data'], 'Data should have 2 elements');
         $this->assertEquals(5, $data['data']['count'], 'Ticket count should be 5');
+    }
+
+    public function testGetTicketQR() {
+        global $app;
+        echo 'Testing getTicketQR:' . "\n";
+        // instantiate controller
+        $action = new Ticket($app->getContainer());
+
+        $random = rand(1,4);
+        echo '- entry #' . ($random) . "\n";
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket/' . $random . '.qr'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->getTicketQR($request, $response, ['id' => $random]);
+
+        $this->assertSame($response->getStatusCode(), 200, 'Status code should be 200');
+        $this->assertSame($response->getHeader('Content-type')[0], 'image/png', 'Filetype should be image/png');
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket/42.qr'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->getTicketQR($request, $response, ['id' => 42]);
+
+        $this->assertSame($response->getStatusCode(), 404, 'Status code should be 404');
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket/42.qr'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->getTicketQR($request, $response, []);
+
+        $this->assertSame($response->getStatusCode(), 400, 'Status code should be 400');
+        
     }
 
     public function testUpdateTicket()
@@ -259,6 +412,42 @@ class TicketTest extends PHPUnit_Framework_TestCase
         $metadata = json_decode($ticket['metadata'], true);
         $this->assertArrayHasKey('__version', $metadata, 'Metadata must have version');
         $this->assertGreaterThanOrEqual(1, $metadata['__version'], 'Version must be 1 or higher');
+
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/ticket/42'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $body = new RequestBody();
+        $body->write(http_build_query($sample));
+        $headers = Headers::createFromEnvironment($environment);
+        $request = new Request(
+            $request->getMethod(), $request->getUri(), $headers,
+            Cookies::parseHeader($headers->get('Cookie', [])),
+            $request->getServerParams(), $body, $request->getUploadedFiles()
+        );
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->updateTicket($request, $response, ['id' => 42]);
+
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertEquals('error', $data['status'], 'Status must be error');
+        $this->assertEquals(404, $data['code'], 'Code must be 404 (int)');
+        $this->assertArrayHasKey('message', $data, 'Response must have a message');
+
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+        // run the controller action and test it
+        $response = $action->updateTicket($request, $response, []);
+
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertEquals('error', $data['status'], 'Status must be error');
+        $this->assertEquals(400, $data['code'], 'Code must be 400 (int)');
+        $this->assertArrayHasKey('message', $data, 'Response must have a message');
+
     }
 
     public function testDeleteTicket()
@@ -309,6 +498,33 @@ class TicketTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('data', $data, 'JSON response should have `data`-key');
         $this->assertCount(2, $data['data'], 'Data should have 2 elements');
         $this->assertEquals(3, $data['data']['count'], 'Ticket count should be 3');
+
+
+        // We need a request and response object to invoke the action
+        $environment = Environment::mock([
+            'REQUEST_METHOD' => 'DELETE',
+            'REQUEST_URI' => '/ticket/42'
+        ]);
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+
+        // run the controller action and test it
+        $response = $action->deleteTicket($request, $response, ['id' => 42]);
+
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertEquals('error', $data['status'], 'Status must be error');
+        $this->assertEquals(404, $data['code'], 'Code must be 404 (int)');
+        $this->assertArrayHasKey('message', $data, 'Response must have a message');
+
+        $request = Request::createFromEnvironment($environment);
+        $response = new Response();
+        // run the controller action and test it
+        $response = $action->deleteTicket($request, $response, []);
+
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertEquals('error', $data['status'], 'Status must be error');
+        $this->assertEquals(400, $data['code'], 'Code must be 400 (int)');
+        $this->assertArrayHasKey('message', $data, 'Response must have a message');
     }
 
     public function tearDown()
