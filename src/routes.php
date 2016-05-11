@@ -16,7 +16,7 @@ $app->get('/', function ($request, $response, $args) {
 $app->group('/ticket', function () {
     $this->get('', '\CFM2\Controllers\Ticket:getTickets');
     $this->get('/{id:[0-9]+}', '\CFM2\Controllers\Ticket:getTicket');
-    $this->get('/{id:[0-9]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
+    //$this->get('/{id:[0-9]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
     $this->get('/{id:[0-9]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');
     /*$this->get('/{id:[0-9a-z]+}.pdf', '\CFM2\Controllers\Ticket:getTicketPDF');
     $this->get('/{id:[0-9a-z]+}.qr', '\CFM2\Controllers\Ticket:getTicketQR');*/

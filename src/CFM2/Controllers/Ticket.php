@@ -96,7 +96,12 @@ class Ticket
      * @return Response
      */
     public function getTicket( Request $request, Response $response, $args = [] ) {
-        $id = $args['id'];
+        if (array_key_exists('id', $args)) {
+            $id = $args['id'];
+        }
+        else {
+            $id = null;
+        }
 
         // Showtime!
         try {
@@ -137,9 +142,14 @@ class Ticket
      * @param Response $response
      * @param array $args
      * @return Response
-     */
+
     public function getTicketPDF( Request $request, Response $response, $args = [] ) {
-        $id = $args['id'];
+        if (array_key_exists('id', $args)) {
+            $id = $args['id'];
+        }
+        else {
+            $id = null;
+        }
 
         // Showtime!
         try {
@@ -184,7 +194,7 @@ class Ticket
                         'L',
                         false,
                         1
-                    );*/
+                    );// /
                     $pdf->Ln(90);
                     $pdf->write2DBarcode($ticket->hash, 'QRCODE,H', 75, 70, 60, 60);
                     $pdf->SetFont('dejavusansmono', 'B', 32);
@@ -199,7 +209,7 @@ class Ticket
                     $file = CF_DIR_CACHE . '/' . $ab . '/' . $cd . '/' . $ticket->hash . '.pdf';
                     if (!file_exists(dirname($file))) {
                         mkdir(dirname($file), 0755, true);
-                    }*/
+                    }// /
                     //$data = $pdf->Output('', 'S');
                     $this->ci->get('logger')->debug(sprintf('getTicketPDF: %s', 'Retrieved ticket'), ['id' => $id]);
                     $response->getBody()->write($pdf->Output('', 'S'));
@@ -226,8 +236,8 @@ class Ticket
             // Flush the toilet
             R::close();
         }
-    }
-
+    }*/
+    
     /**
      * getTicketQR
      * Get a single ticket's QR code by parameter (ID)
@@ -238,7 +248,12 @@ class Ticket
      * @return Response
      */
     public function getTicketQR( Request $request, Response $response, $args = [] ) {
-        $id = $args['id'];
+        if (array_key_exists('id', $args)) {
+            $id = $args['id'];
+        }
+        else {
+            $id = null;
+        }
 
         // Showtime!
         try {
@@ -290,7 +305,12 @@ class Ticket
         // Grab parameter from the request
         // @TODO Add validation
         $params = $request->getParsedBody();
-        $id = $args['id'];
+        if (array_key_exists('id', $args)) {
+            $id = $args['id'];
+        }
+        else {
+            $id = null;
+        }
 
         // Showtime!
         try {
@@ -333,10 +353,10 @@ class Ticket
      * @param Response $response
      * @param array $args
      * @return Response
-     */
+
     public function updateTickets( Request $request, Response $response, $args = [] ) {
         return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
-    }
+    }*/
 
 
     /**
@@ -381,10 +401,10 @@ class Ticket
      * @param Response $response
      * @param array $args
      * @return Response
-     */
+
     public function createTickets( Request $request, Response $response, $args = [] ) {
         return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
-    }
+    }*/
 
     /**
      * deleteTicket
@@ -398,7 +418,12 @@ class Ticket
     public function deleteTicket( Request $request, Response $response, $args = [] ) {
         // Grab parameter from the request
         // @TODO Add validation
-        $id = $args['id'];
+        if (array_key_exists('id', $args)) {
+            $id = $args['id'];
+        }
+        else {
+            $id = null;
+        }
 
         // Showtime!
         try {
@@ -443,9 +468,9 @@ class Ticket
      * @param Response $response
      * @param array $args
      * @return Response
-     */
+
     public function deleteTickets( Request $request, Response $response, $args = [] ) {
         return $response->withStatus(501)->withJson(new FormatResponse([], 501, 'Not implemented'));
-    }
+    }*/
 
 }
